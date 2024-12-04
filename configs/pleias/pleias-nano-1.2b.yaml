@@ -1,0 +1,141 @@
+checkpoints:
+  checkpoint_interval: 3000
+  checkpoints_path: checkpoints_pleias_1.2b
+  save_initial_state: false
+  save_final_state: true
+tracto_checkpoints:
+  checkpoints_path: checkpoints_pleias_1.2b
+  checkpoints_medium: nvme
+  load_last_checkpoint: true
+  tmpfs_path: ./checkpoints_primary
+  use_async_saver: true
+data_stages:
+- data:
+    dataset:
+      tracto_dataset: yt_table
+      yt_dataset_path: base_corpus
+      dataset_batch_size: 4
+  name: Base Corpus
+  start_training_step: 1
+- data:
+    dataset:
+      tracto_dataset: yt_table
+      yt_dataset_path: annealing_corpus
+      dataset_batch_size: 4
+  name: Annealing Corpus Epoch 1
+  start_training_step: 323501
+- data:
+    dataset:
+      tracto_dataset: yt_table
+      yt_dataset_path: annealing_corpus
+      dataset_batch_size: 4
+  name: Annealing Corpus Epoch 2
+  start_training_step: 495501
+- data:
+    dataset:
+      tracto_dataset: yt_table
+      yt_dataset_path: annealing_corpus
+      dataset_batch_size: 4
+  name: Annealing Corpus Epoch 3 (last 4k steps)
+  start_training_step: 667501
+- data:
+    dataset:
+      tracto_dataset: yt_table
+      yt_dataset_path: instruct_rag_corpus
+      dataset_batch_size: 4
+  name: Instruct+RAG Corpus Epoch 1
+  start_training_step: 671501
+- data:
+    dataset:
+      tracto_dataset: yt_table
+      yt_dataset_path: instruct_rag_corpus
+      dataset_batch_size: 4
+  name: Instruct+RAG Corpus Epoch 2
+  start_training_step: 744501
+- data:
+    dataset:
+      tracto_dataset: yt_table
+      yt_dataset_path: instruct_rag_corpus
+      dataset_batch_size: 4
+  name: Instruct+RAG Corpus Epoch 3
+  start_training_step: 817501
+general:
+  benchmark_csv_path: null
+  consumed_train_samples: null
+  ignore_sanity_checks: true
+  project: pleias_1.2b
+  run: pleias_1.2b_pretrain
+  seed: 42
+  step: null
+lighteval: null
+logging:
+  iteration_step_info_interval: 1
+  log_level: info
+  log_level_replica: info
+model:
+  ddp_bucket_cap_mb: 25
+  dtype: bfloat16
+  init_method:
+    std: 0.025
+  make_vocab_size_divisible_by: 1
+  model_config:
+    bos_token_id: 1
+    eos_token_id: 2
+    hidden_act: silu
+    hidden_size: 2048
+    initializer_range: 0.02
+    intermediate_size: 6144
+    is_llama_config: true
+    max_position_embeddings: 2048
+    num_attention_heads: 32
+    num_hidden_layers: 22
+    num_key_value_heads: 8
+    pad_token_id: null
+    pretraining_tp: 1
+    rms_norm_eps: 1.0e-05
+    rope_scaling: null
+    tie_word_embeddings: true
+    use_cache: true
+    vocab_size: 65536
+    rope_theta: 10000
+optimizer:
+  accumulate_grad_in_fp32: true
+  clip_grad: 1.0
+  learning_rate_scheduler:
+    learning_rate: 0.001
+    lr_decay_starting_step: 60001
+    lr_decay_steps: 611500
+    lr_decay_style: cosine
+    lr_warmup_steps: 60000
+    lr_warmup_style: linear
+    min_decay_lr: 0.00001
+  optimizer_factory:
+    adam_beta1: 0.9
+    adam_beta2: 0.95
+    adam_eps: 1.0e-08
+    name: adamW
+    torch_adam_is_fused: true
+  weight_decay: 0.01
+  zero_stage: 0
+parallelism:
+  recompute_layer: False
+  dp: 16  # 192 before instruct + rag
+  expert_parallel_size: 1
+  pp: 1
+  pp_engine: 1f1b
+  tp: 1
+  tp_linear_async_communication: false
+  tp_mode: ALL_REDUCE
+profiler: null
+tokenizer:
+  tokenizer_max_length: null
+  tokenizer_name_or_path: pleias_tokenizer
+  tokenizer_revision: null
+tokens:
+  batch_accumulation_per_replica: 2
+  limit_test_batches: 0
+  limit_val_batches: 0
+  micro_batch_size: 8
+  sequence_length: 2048
+  train_steps: 890500
+  val_check_interval: -1
